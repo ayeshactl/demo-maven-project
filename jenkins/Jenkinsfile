@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+          tools {
+    jdk 'jdk21'
+}
+    
     environment {
         IMAGE_NAME = "java-maven-app"
         CONTAINER_NAME = "java-app-container"
