@@ -18,15 +18,21 @@ pipeline {
                     url: 'https://github.com/ayeshactl/demo-maven-project.git'           
             }
         }
-
-        stage('Build Maven App') {
+stage('Build Maven App') {
     steps {
         sh '''
-        export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
-        export PATH=$JAVA_HOME/bin:$PATH
+        echo "PATH BEFORE FIX:"
+        echo $PATH
 
+        export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+        export PATH=/usr/lib/jvm/java-21-openjdk-amd64/bin:/usr/bin:/bin
+
+        echo "JAVA VERSION:"
         java -version
+
+        echo "MAVEN VERSION:"
         mvn -v
+
         mvn clean package
         '''
     }
