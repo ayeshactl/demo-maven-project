@@ -1,27 +1,46 @@
 pipeline {
     agent any
-    options {
-        skipStagesAfterUnstable()
+
+    environment {
+        IMAGE_NAME = "java-maven-app"
+        CONTAINER_NAME = "java-app-container"
     }
+
     stages {
-        stage('Build') {
+
+        stage('Clone Code') {
             steps {
-                sh 'mvn -B -DskipTests clean package'
+                git branch: 'main',
+                url: 'https://github.com/YOUR_USERNAME/demo-maven-project.git'
             }
         }
-        stage('Test') {
+
+        stage('Build Maven App') {
             steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
+                sh 'mvn clean package'
             }
         }
-        stage('Deliver') { 
+
+        stage('Docker Build Image') {
             steps {
-                sh './jenkins/scripts/deliver.sh' 
+                sh 'docker build -t $IMAGE_NAME .'
+            }
+        }
+
+        stage('Stop Old Container') {
+            steps {
+                sh '''
+                docker stop $CONTAINER_NAME || true
+                docker rm $CONTAINER_NAME || true
+                '''
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh '''
+                docker run -d -p 8081:8080 --name $CONTAINER_NAME $IMAGE_NAME
+                '''
             }
         }
     }
