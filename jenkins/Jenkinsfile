@@ -8,11 +8,12 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/ayeshactl/demo-maven-project.git'
-            }
-        }
+stage('Checkout') {
+    steps {
+        git branch: 'main',
+            url: 'https://github.com/ayeshactl/demo-maven-project.git'
+    }
+}
 
         stage('Build Maven App') {
             steps {
